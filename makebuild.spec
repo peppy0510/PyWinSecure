@@ -24,7 +24,7 @@ Analysis = Analysis  # noqa
 
 __appname__ = 'PyWinSecure'
 __default_python_path__ = 'C:\\Program Files\\Python36'
-__api_ms_win_crt_path__ = 'C:\\Windows\\WinSxS\\amd64_microsoft-windows-m..namespace-downlevel_31bf3856ad364e35_10.0.17763.1_none_b82ac495d943b9d7'
+__api_ms_win_crt_path__ = 'C:\\Windows\\WinSxS\\amd64_microsoft-windows-m..namespace-downlevel_31bf3856ad364e35_10.0.17134.1_none_ace56707ea44b3c5'
 
 
 class Path():

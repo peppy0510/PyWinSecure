@@ -2,7 +2,7 @@
 
 
 __appname__ = 'PyWinSecure'
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 __author__ = 'Taehong Kim'
 __email__ = 'peppy0510@hotmail.com'
 __license__ = ''
@@ -13,8 +13,6 @@ __doc__ = '''
 import glob
 import os
 import subprocess
-import sys
-import threading
 import wx
 
 from icon import FrameIcon
@@ -23,8 +21,6 @@ from preference import Preference
 from statusbar import StatusBar
 from wininstance import kill_existing_instances
 from winscreens import get_screens
-# from wininstance import get_current_real_cwq
-# threadListLock = threading.Lock()
 
 
 class ListBoxListDnD(wx.FileDropTarget):
@@ -41,26 +37,10 @@ class ListBoxListDnD(wx.FileDropTarget):
             if not os.path.isdir(path):
                 inpaths.pop(i)
                 continue
-            self.parent.debug_line('IMPORT: {}'.format(path))
+            self.parent.debug_line('{}'.format(path))
         self.parent.FuncPanel.set_rootdirs(inpaths)
         self.parent.set_status(' IMPORT FINISHED')
         return 0
-
-
-class SubprocessThread(threading.Thread):
-
-    def __init__(self, command):
-        self.command = command
-        self.stdout = None
-        self.stderr = None
-        threading.Thread.__init__(self)
-
-    def run(self):
-        p = subprocess.Popen(self.command,
-                             shell=True,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
-        self.stdout, self.stderr = p.communicate()
 
 
 class FuncPanel(wx.Panel):
@@ -69,26 +49,21 @@ class FuncPanel(wx.Panel):
         wx.Panel.__init__(self, parent=parent)
         self.parent = parent
         self.rootdirs = []
-        # self.Tool = FuncPanelTool(self)
-        # self.Bind(wx.EVT_SIZE, self.OnSize)
 
         font = wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD)
 
-        self.ShowButton = wx.Button(self, id=wx.ID_ANY, label="Show", pos=wx.DefaultPosition,
-                                    size=wx.DefaultSize, style=0, validator=wx.DefaultValidator,
-                                    name=wx.ButtonNameStr)
-
-        self.ShowButton.Bind(wx.EVT_BUTTON, self.OnShowButton)
+        self.ShowButton = wx.Button(self, id=wx.ID_ANY, label='Show')
         self.ShowButton.SetFont(font)
         self.ShowButton.SetRect((4, 5, 120, 35))
+        self.ShowButton.Bind(wx.EVT_BUTTON, self.OnShowButton)
 
-        self.HideButton = wx.Button(self, id=wx.ID_ANY, label="Hide", pos=wx.DefaultPosition,
-                                    size=wx.DefaultSize, style=0, validator=wx.DefaultValidator,
-                                    name=wx.ButtonNameStr)
-        self.HideButton.Bind(wx.EVT_BUTTON, self.OnHideButton)
+        self.HideButton = wx.Button(self, id=wx.ID_ANY, label='Hide')
         self.HideButton.SetFont(font)
-
         self.HideButton.SetRect((127, 5, 120, 35))
+        self.HideButton.Bind(wx.EVT_BUTTON, self.OnHideButton)
+
+    def subprocess(self, command):
+        subprocess.call(command, shell=True)
 
     def OnShowButton(self, event):
         self.parent.init_debug()
@@ -98,15 +73,11 @@ class FuncPanel(wx.Panel):
             self.parent.set_status('NO DIRECTORIES HAS BEEN SET')
             return
         self.parent.set_status('SHOW ...')
+
         for v in pathparams:
-            command = 'attrib -s -h "%s"' % (v)
+            command = 'attrib -s -h "{}"'.format(v)
             self.parent.debug_line('{}'.format(v))
-            proc = SubprocessThread(command)
-            # myclass = MyClass()
-            proc.start()
-            proc.join()
-            # proc = subprocess.Popen(command, stdout=subprocess.PIPE)
-            # proc.communicate()
+            self.subprocess(command)
         self.parent.set_status('SHOW FINISHED')
 
     def OnHideButton(self, event):
@@ -119,13 +90,9 @@ class FuncPanel(wx.Panel):
         self.parent.set_status('HIDE ...')
 
         for v in pathparams:
-            command = 'attrib +s +h "%s"' % (v)
+            command = 'attrib +s +h "{}"'.format(v)
             self.parent.debug_line('{}'.format(v))
-            proc = SubprocessThread(command)
-            proc.start()
-            proc.join()
-            # proc = subprocess.Popen(command, stdout=subprocess.PIPE)
-            # proc.communicate()
+            self.subprocess(command)
         self.parent.set_status('HIDE FINISHED')
 
     def set_rootdirs(self, rootdirs):
@@ -161,8 +128,6 @@ class DebugPanel(wx.TextCtrl):
         self.parent = parent
         self.SetCursor(wx.Cursor(wx.CURSOR_ARROW))
         self.SetMargins(left=5)
-        # self.SetMargins(left=5, top=50)
-        # wx.CURSOR_ARROWWAIT | wx.CURSOR_WAIT
 
 
 class MainFrame(wx.Frame, Preference, FrameIcon, MenuBar, StatusBar):
@@ -176,17 +141,17 @@ class MainFrame(wx.Frame, Preference, FrameIcon, MenuBar, StatusBar):
         self.defaultStyle = wx.CLIP_CHILDREN | wx.FRAME_SHAPED | wx.MINIMIZE_BOX |\
             wx.MAXIMIZE_BOX | wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION |\
             wx.RESIZE_BORDER | wx.TAB_TRAVERSAL | wx.BORDER_DEFAULT
-        wx.Frame.__init__(self, parent, id=wx.ID_ANY, pos=wx.DefaultPosition,
-                          size=wx.Size(300, 300), style=self.defaultStyle)
-        # 268
+
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY)
         Preference.__init__(self)
         FrameIcon.__init__(self)
         MenuBar.__init__(self)
         StatusBar.__init__(self)
 
         self.SetTitle(self.__appname__)
-        self.SetMinSize((300, 300))
+        self.SetMinSize((268, 300))
         self.SetMaxSize((-1, -1))
+        self.SetSize((350, 300))
         # self.SetWindowStyle(self.defaultStyle | wx.STAY_ON_TOP)
         self.SetWindowStyle(self.defaultStyle)
         w, h = self.GetSize()
@@ -210,11 +175,12 @@ class MainFrame(wx.Frame, Preference, FrameIcon, MenuBar, StatusBar):
             finish_y = min([v.finish.y for v in screens])
             if x + margin < finish_x and y + margin < finish_y:
                 self.SetSize(size)
-                self.SetPosition(position)        # print('Enabled', style)
+                self.SetPosition(position)
 
         alwaysontop = self.get_preference('alwaysontop')
         alwaysontop = True if alwaysontop is None else alwaysontop
         self.SetAlwaysOnTopValue(alwaysontop)
+        self.Update()
         self.Show()
 
     def init_debug(self):
@@ -237,11 +203,8 @@ class MainFrame(wx.Frame, Preference, FrameIcon, MenuBar, StatusBar):
         self.FuncPanel.SetSize(width, split)
         self.DebugPanel.SetPosition((0, split))
         self.DebugPanel.SetSize(width, height - split)
-        # self.StatusBar.SetSize(width, 30)
-        # self.StatusBar.SetStatusWidths([width])
 
     def OnClose(self, event=None):
-        # print(self.GetScreenPosition())
         self.set_preference('size', list(self.GetClientSize()))
         self.set_preference('position', list(self.GetScreenPosition()))
         self.set_preference('alwaysontop', self.AlwaysOnTopMenuItem.IsChecked())
