@@ -2,7 +2,7 @@
 
 
 __appname__ = 'PyWinSecure'
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 __author__ = 'Taehong Kim'
 __email__ = 'peppy0510@hotmail.com'
 __license__ = ''
@@ -272,8 +272,8 @@ def main():
 
 
 if __name__ == '__main__':
-    from io import TextIOWrapper
-    sys.stdout = TextIOWrapper(
-        sys.stdout.buffer, encoding='utf-8', errors='replace')
+    # from io import TextIOWrapper
+    # sys.stdout = TextIOWrapper(
+    #     sys.stdout.buffer, encoding='utf-8', errors='replace')
     kill_existing_instances()
     main()

@@ -178,7 +178,7 @@ class Build(BuildBase):
         self.set_default_python_path()
         self.remove_build()
         self.make_build()
-        # # self.run_build()
+        # self.run_build()
         self.make_installer()
         self.compress_installer()
 

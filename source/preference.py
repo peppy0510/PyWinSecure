@@ -9,7 +9,6 @@ email: peppy0510@hotmail.com
 
 import json
 import os
-import sys
 
 
 class Preference():
@@ -17,15 +16,12 @@ class Preference():
     def __init__(self):
         self.preference_dir = os.path.join(
             os.path.expanduser('~'), 'AppData', 'Local', self.__appname__)
+        # self.preference_dir = os.path.join(
+        #     os.path.expanduser('~'), 'Documents', self.__appname__)
         self.preference_path = os.path.join(self.preference_dir, 'settings.json')
-        print(self.preference_dir)
-
-    def get_preference_path(self):
-        return os.path.join(os.path.expanduser('~'),
-                            'AppData', 'Local', self.__appname__)
+        # print(self.preference_path)
 
     def get_preference(self, key):
-        self.get_preference_path()
         if os.path.exists(self.preference_path):
             with open(self.preference_path, 'r') as file:
                 content = file.read()
