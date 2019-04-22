@@ -16,10 +16,7 @@ class Preference():
     def __init__(self):
         self.preference_dir = os.path.join(
             os.path.expanduser('~'), 'AppData', 'Local', self.__appname__)
-        # self.preference_dir = os.path.join(
-        #     os.path.expanduser('~'), 'Documents', self.__appname__)
         self.preference_path = os.path.join(self.preference_dir, 'settings.json')
-        # print(self.preference_path)
 
     def get_preference(self, key):
         if os.path.exists(self.preference_path):

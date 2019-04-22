@@ -30,13 +30,6 @@ class MenuBar():
         SettingsMenu = wx.Menu()
         self.AlwaysOnTopMenuItem = make_menuitem(
             'Always on top', SettingsMenu, self.OnAlwaysOnTopToggle, kind=wx.ITEM_CHECK)
-
-        # SettingsMenu.AppendSeparator()
-        # self.AutoClearWhenImportMenuItem = make_menuitem('Auto clear when import', SettingsMenu, None)
-        # self.AutoClearWhenImportMenuItem.Check(True)
-        # self.AutoClearWhenBatchPrecessingMenuItem = make_menuitem(
-        #     'Auto clear after batch processing', SettingsMenu, None)
-        # self.AutoClearWhenBatchPrecessingMenuItem.Check(True)
         MenuBar.Append(SettingsMenu, '&Settings')
 
         HelpMenu = wx.Menu()
