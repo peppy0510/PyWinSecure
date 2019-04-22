@@ -5,6 +5,10 @@
 * Does not hide root directory, hide only contained directories and files.
 * Beautify log panel shows up working status.
 
+## Screenshot
+
+![screenshot](/assets/images/screenshot-001.png)
+
 ## How to install
 
 * Just download and install the latest release.
@@ -15,6 +19,3 @@
 * Microsoft Windows 10
 * Other versions of Windows have not been tested yet.
 
-## Screenshot
-
-![screenshot](/assets/images/screenshot-001.png)
