@@ -2,7 +2,7 @@
 
 
 __appname__ = 'PyWinSecure'
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 __author__ = 'Taehong Kim'
 __email__ = 'peppy0510@hotmail.com'
 __license__ = ''
@@ -171,8 +171,8 @@ class MainFrame(wx.Frame, Preference, FrameIcon, MenuBar, StatusBar):
             width, height = size
             margin = 50
             screens = get_screens()
-            finish_x = min([v.finish.x for v in screens])
-            finish_y = min([v.finish.y for v in screens])
+            finish_x = max([v.finish.x for v in screens])
+            finish_y = max([v.finish.y for v in screens])
             if x + margin < finish_x and y + margin < finish_y:
                 self.SetSize(size)
                 self.SetPosition(position)
