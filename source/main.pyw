@@ -156,7 +156,7 @@ class MainFrame(wx.Frame, Preference, FrameIcon, MenuBar, StatusBar):
         self.SetWindowStyle(self.defaultStyle)
         w, h = self.GetSize()
         width, height = wx.GetDisplaySize()
-        self.SetPosition(((width - w) / 2, (height - h) / 2))
+        self.SetPosition((int((width - w) * 0.5), int((height - h) * 0.5)))
         self.FuncPanel = FuncPanel(self)
         self.DebugPanel = DebugPanel(self)
         self.FileDrop = ListBoxListDnD(self)

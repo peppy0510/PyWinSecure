@@ -8,15 +8,9 @@ email: peppy0510@hotmail.com
 
 
 import os
+import pywintypes  # noqa # pre-load dll for win32com
 
 from win32com.client import Dispatch
-
-
-def create_desktop_ini(directory, icon_resource, folder_type='Generic'):
-    with open(os.path.join(directory, 'desktop.ini'), 'w') as file:
-        file.write('\n'.join([
-            '[.ShellClassInfo]', 'IconResource=%s,0' % icon_resource,
-            '[ViewState]', 'Mode=', 'Vid=', 'FolderType=%s' % folder_type]))
 
 
 class ShortCut():
@@ -74,3 +68,14 @@ class ShortCut():
                 shortcut.IconLocation = icon
             shortcut.save()
         # print('[ SHORTCUT CREATED ] [ {} ]'.format(path))
+
+
+def create_shortcut(*args, **kwargs):
+    ShortCut.create(*args, **kwargs)
+
+
+def create_desktop_ini(directory, icon_resource, folder_type='Generic'):
+    with open(os.path.join(directory, 'desktop.ini'), 'w') as file:
+        file.write('\n'.join([
+            '[.ShellClassInfo]', 'IconResource=%s,0' % icon_resource,
+            '[ViewState]', 'Mode=', 'Vid=', 'FolderType=%s' % folder_type]))
