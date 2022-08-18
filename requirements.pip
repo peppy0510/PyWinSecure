@@ -1,5 +1,6 @@
-pywin32
-wxpython
+git+ssh://git@github.com/peppy0510/ObjectListView.git
 pyinstaller
-objectlistview
+pywin32
 screeninfo
+wxpython
+# objectlistview
