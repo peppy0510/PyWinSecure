@@ -1,4 +1,4 @@
-git+ssh://git@github.com/peppy0510/ObjectListView.git
+git+https://git@github.com/peppy0510/ObjectListView.git
 pyinstaller
 pywin32
 screeninfo
