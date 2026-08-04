@@ -7,3 +7,6 @@ dist
 build
 /venv
 desktop.ini
+
+# AI assistant notes — keep local, do not publish
+/CLAUDE.md

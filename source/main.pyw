@@ -23,6 +23,11 @@ from wininstance import kill_existing_instances
 from winscreens import get_screens
 
 
+# 기억된 위치가 이만큼도 화면에 안 걸치면 사라진 모니터로 본다.
+MIN_VISIBLE_WIDTH = 120
+MIN_VISIBLE_HEIGHT = 32
+
+
 class ListBoxListDnD(wx.FileDropTarget):
 
     def __init__(self, parent):
@@ -154,9 +159,7 @@ class MainFrame(wx.Frame, Preference, FrameIcon, MenuBar, StatusBar):
         self.SetSize((350, 300))
         # self.SetWindowStyle(self.defaultStyle | wx.STAY_ON_TOP)
         self.SetWindowStyle(self.defaultStyle)
-        w, h = self.GetSize()
-        width, height = wx.GetDisplaySize()
-        self.SetPosition((int((width - w) * 0.5), int((height - h) * 0.5)))
+        self.set_centre_position()
         self.FuncPanel = FuncPanel(self)
         self.DebugPanel = DebugPanel(self)
         self.FileDrop = ListBoxListDnD(self)
@@ -164,24 +167,38 @@ class MainFrame(wx.Frame, Preference, FrameIcon, MenuBar, StatusBar):
         self.Bind(wx.EVT_CLOSE, self.OnClose)
         self.Bind(wx.EVT_SIZE, self.OnResize)
 
-        size = self.get_preference('size')
-        position = self.get_preference('position')
-        if size and position:
-            x, y = position
-            width, height = size
-            margin = 50
-            screens = get_screens()
-            finish_x = max([v.finish.x for v in screens])
-            finish_y = max([v.finish.y for v in screens])
-            if x + margin < finish_x and y + margin < finish_y:
-                self.SetSize(size)
-                self.SetPosition(position)
+        self.restore_geometry(self.get_preference('size'),
+                              self.get_preference('position'))
 
         alwaysontop = self.get_preference('alwaysontop')
         alwaysontop = True if alwaysontop is None else alwaysontop
         self.SetAlwaysOnTopValue(alwaysontop)
         self.Update()
         self.Show()
+
+    def set_centre_position(self):
+        w, h = self.GetSize()
+        width, height = wx.GetDisplaySize()
+        self.SetPosition((int((width - w) * 0.5), int((height - h) * 0.5)))
+
+    def is_rect_visible(self, x, y, width, height):
+        # 모니터를 떼거나 배치를 바꾸면 기억된 좌표가 어느 화면에도 안 걸칠 수 있다.
+        for screen in get_screens():
+            shared_width = min(x + width, screen.finish.x) - max(x, screen.offset.x)
+            shared_height = min(y + height, screen.finish.y) - max(y, screen.offset.y)
+            if shared_width >= MIN_VISIBLE_WIDTH and shared_height >= MIN_VISIBLE_HEIGHT:
+                return True
+        return False
+
+    def restore_geometry(self, size, position):
+        if not size or not position or len(size) != 2 or len(position) != 2:
+            return
+
+        self.SetSize(size)
+        if self.is_rect_visible(position[0], position[1], size[0], size[1]):
+            self.SetPosition(position)
+            return
+        self.set_centre_position()
 
     def init_debug(self):
         self.DebugPanel.SetValue('')
@@ -205,8 +222,11 @@ class MainFrame(wx.Frame, Preference, FrameIcon, MenuBar, StatusBar):
         self.DebugPanel.SetSize(width, height - split)
 
     def OnClose(self, event=None):
-        self.set_preference('size', list(self.GetClientSize()))
-        self.set_preference('position', list(self.GetScreenPosition()))
+        # 최소화·최대화 상태의 좌표를 저장하면 다음 실행이 화면 밖에서 뜬다.
+        if self.IsIconized() is False and self.IsMaximized() is False:
+            # SetSize 로 되돌리는 값이라 클라이언트 크기가 아니라 창 전체 크기를 저장한다.
+            self.set_preference('size', list(self.GetSize()))
+            self.set_preference('position', list(self.GetScreenPosition()))
         self.set_preference('alwaysontop', self.AlwaysOnTopMenuItem.IsChecked())
         wx.CallAfter(self.Destroy)
 

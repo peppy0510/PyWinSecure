@@ -12,7 +12,7 @@ import sys
 import wx
 
 
-from wininstance import get_current_real_cwq
+from wininstance import get_current_real_cwd
 
 
 class FrameIcon():
@@ -26,7 +26,7 @@ class FrameIcon():
         if hasattr(sys, '_MEIPASS'):
             self.icon_path = os.path.join(sys._MEIPASS, self.icon_path)
         else:
-            cwd = os.path.dirname(get_current_real_cwq())
+            cwd = os.path.dirname(get_current_real_cwd())
             self.icon_path = os.path.join(cwd, self.icon_path)
 
         icon.CopyFromBitmap(wx.Bitmap(self.icon_path, wx.BITMAP_TYPE_ANY))
