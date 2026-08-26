@@ -5,7 +5,7 @@
 *.pyo
 dist
 build
-/venv
+/.venv
 desktop.ini
 
 # AI assistant notes — keep local, do not publish
