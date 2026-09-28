@@ -1,6 +1,6 @@
 git+https://git@github.com/peppy0510/ObjectListView.git
 pyinstaller
+psutil
 pywin32
-screeninfo
 wxpython
 # objectlistview

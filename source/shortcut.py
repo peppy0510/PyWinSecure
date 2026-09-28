@@ -30,8 +30,17 @@ class ShortCut():
         return os.path.join(path, name)
 
     @classmethod
+    def get_user_programs_path(self, name=None):
+        path = os.path.join(self.get_user_startmenu_path(), 'Programs')
+        if not name:
+            return path
+        if not name.lower().endswith('.lnk'):
+            name = '{}.lnk'.format(name)
+        return os.path.join(path, name)
+
+    @classmethod
     def get_user_startup_path(self, name=None):
-        path = os.path.join(self.get_user_startmenu_path(), 'Programs', 'Startup')
+        path = os.path.join(self.get_user_programs_path(), 'Startup')
         if not name:
             return path
         if not name.lower().endswith('.lnk'):
@@ -40,8 +49,7 @@ class ShortCut():
 
     @classmethod
     def has_user_startup(self, name):
-        path = self.get_user_startup_path(name)
-        return os.path.exists(path)
+        return os.path.exists(self.get_user_startup_path(name))
 
     @classmethod
     def remove_user_startup(self, name):
@@ -55,27 +63,18 @@ class ShortCut():
         if ext == 'url':
             with open(path, 'w') as file:
                 file.write('[InternetShortcut]\nURL=%s' % target_path)
-        else:
-            shell = Dispatch('WScript.Shell')
+            return
 
-            shortcut = shell.CreateShortCut(
-                path if path.endswith('.lnk') else '.'.join([path, 'lnk']))
-            # shortcut.WindowStyle = 1
-            shortcut.Arguments = arguments
-            shortcut.Targetpath = target_path
-            shortcut.WorkingDirectory = working_directory
-            if icon:
-                shortcut.IconLocation = icon
-            shortcut.save()
-        # print('[ SHORTCUT CREATED ] [ {} ]'.format(path))
+        shell = Dispatch('WScript.Shell')
+        shortcut = shell.CreateShortCut(
+            path if path.endswith('.lnk') else '.'.join([path, 'lnk']))
+        shortcut.Arguments = arguments
+        shortcut.Targetpath = target_path
+        shortcut.WorkingDirectory = working_directory
+        if icon:
+            shortcut.IconLocation = icon
+        shortcut.save()
 
 
 def create_shortcut(*args, **kwargs):
     ShortCut.create(*args, **kwargs)
-
-
-def create_desktop_ini(directory, icon_resource, folder_type='Generic'):
-    with open(os.path.join(directory, 'desktop.ini'), 'w') as file:
-        file.write('\n'.join([
-            '[.ShellClassInfo]', 'IconResource=%s,0' % icon_resource,
-            '[ViewState]', 'Mode=', 'Vid=', 'FolderType=%s' % folder_type]))

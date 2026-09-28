@@ -1,9 +1,10 @@
 ## Features
 
-* GUI tool to hide or show Windows folder.
-* Supports drag and drop.
+* GUI tool to hide or show Windows folders.
+* Supports drag and drop, and remembers the folder list.
 * Does not hide root directory, hide only contained directories and files.
-* Beautify log panel shows up working status.
+* Click the eye next to a folder to hide or show it, or use Show / Hide for all of them.
+* Dark and light themes.
 
 ## Screenshot
 
