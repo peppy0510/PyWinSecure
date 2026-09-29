@@ -65,7 +65,7 @@ class BuildBase():
             content = file.read()
             content = re.sub(ptrn, repl, content, **kwargs)
 
-        with open(path, 'w', encoding='utf-8') as file:
+        with open(path, 'w', encoding='utf-8', newline='\n') as file:
             file.write(content)
 
         return content
@@ -96,19 +96,12 @@ class BuildBase():
                     existing_dirs += [absdir]
         if not existing_dirs:
             return
-        path = list(set(existing_dirs))[0]
-        ptrn = (r'''(__api_ms_win_crt_path__[\s]{0,}=[\s]{0,}[\'\"]{1})'''
-                r'''[\w\d\s\-\_\.\:\\]{0,}([\'\"]{1})''')
-        path = path.replace('\\', '\\\\\\\\')
-        self.subfile(ptrn, r'\g<1>{}\g<2>'.format(path), self.path.spec)
+        # machine specific, so hand it to the spec through the environment
+        os.environ['API_MS_WIN_CRT_PATH'] = list(set(existing_dirs))[0]
 
     @classmethod
     def set_default_python_path(self):
-        path = self.path.pythondir
-        ptrn = (r'''(__default_python_path__[\s]{0,}=[\s]{0,}[\'\"]{1})'''
-                r'''[\w\d\s\-\_\.\:\\]{0,}([\'\"]{1})''')
-        path = path.replace('\\', '\\\\\\\\')
-        self.subfile(ptrn, r'\g<1>{}\g<2>'.format(path), self.path.spec)
+        os.environ['DEFAULT_PYTHON_PATH'] = self.path.pythondir
 
     @classmethod
     def make_build(self):
