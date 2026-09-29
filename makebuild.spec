@@ -61,7 +61,7 @@ a = Analysis([os.path.join('source', 'main.pyw')],
              hiddenimports=[])
 
 
-a.datas += grapdatas(path.assets, 'icon', 2, 'data', ['icon.ico', 'icon.png'])
+a.datas += grapdatas(path.assets, 'icon', 2, 'DATA', ['icon.ico', 'icon.png'])
 
 print('-' * 100)
 for v in a.datas:
@@ -73,13 +73,13 @@ pyz = PYZ(a.pure)
 if onefile:
     exe = EXE(pyz, a.scripts + [('O', '', 'OPTION')],
               a.binaries, a.zipfiles, a.datas,
-              uac_admin=True, uac_uiaccess=True,
+              uac_admin=True, uac_uiaccess=False,
               icon=path.icon, name=path.output,
               upx=upx, strip=None, debug=debug, console=debug)
     # runtime_tmpdir='%HOMEPATH%\\AppData\\Local\\Temp\\' + name
 else:
     exe = EXE(pyz, a.scripts, name=path.output, icon=path.icon,
-              uac_admin=True, uac_uiaccess=True, upx=upx, strip=None,
+              uac_admin=True, uac_uiaccess=False, upx=upx, strip=None,
               debug=debug, console=debug, exclude_binaries=1)
     dist = COLLECT(exe, a.binaries, a.zipfiles, a.datas,
                    upx=upx, strip=None, name=__appname__)

@@ -2,19 +2,19 @@
 
 [Setup]
 AppName="PyWinSecure"
-AppVerName="PyWinSecure 0.1.3"
+AppVerName="PyWinSecure 0.2.0"
 DefaultDirName="{pf}\PyWinSecure"
 DefaultGroupName="PyWinSecure"
-AppVersion="0.1.3"
+AppVersion="0.2.0"
 AppCopyright="Taehong Kim"
 AppPublisher="Taehong Kim"
 UninstallDisplayIcon="{app}\PyWinSecure.exe"
 Compression=lzma2/max
 SolidCompression=yes
 OutputDir="dist"
-OutputBaseFilename="PyWinSecure-0.1.3-Setup"
-; VersionInfoVersion="0.1.3"
-VersionInfoProductVersion="0.1.3"
+OutputBaseFilename="PyWinSecure-0.2.0-Setup"
+; VersionInfoVersion="0.2.0"
+VersionInfoProductVersion="0.2.0"
 VersionInfoCompany="Taehong Kim"
 VersionInfoCopyright="Taehong Kim"
 ArchitecturesInstallIn64BitMode="x64"

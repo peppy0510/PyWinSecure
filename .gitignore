@@ -1,10 +1,10 @@
-*/__pycache__
+__pycache__/
 */__test__
 *.txt
 *.pyc
 *.pyo
-dist
-build
+/dist
+/build
 /.venv
 desktop.ini
 

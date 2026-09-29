@@ -1,4 +1,5 @@
 git+https://git@github.com/peppy0510/ObjectListView.git
+pillow
 pyinstaller
 psutil
 pywin32
