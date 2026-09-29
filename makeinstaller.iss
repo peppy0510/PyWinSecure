@@ -3,7 +3,7 @@
 [Setup]
 AppName="PyWinSecure"
 AppVerName="PyWinSecure 0.2.0"
-DefaultDirName="{pf}\PyWinSecure"
+DefaultDirName="{autopf}\PyWinSecure"
 DefaultGroupName="PyWinSecure"
 AppVersion="0.2.0"
 AppCopyright="Taehong Kim"
@@ -17,7 +17,7 @@ OutputBaseFilename="PyWinSecure-0.2.0-Setup"
 VersionInfoProductVersion="0.2.0"
 VersionInfoCompany="Taehong Kim"
 VersionInfoCopyright="Taehong Kim"
-ArchitecturesInstallIn64BitMode="x64"
+ArchitecturesInstallIn64BitMode="x64compatible"
 
 [Files]
 Source: "dist\*"; DestDir: "{app}"; Flags: recursesubdirs
