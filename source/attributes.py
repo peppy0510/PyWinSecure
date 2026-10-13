@@ -4,9 +4,6 @@
 '''
 author: Taehong Kim
 email: peppy0510@hotmail.com
-
-폴더 안쪽만 숨기고 드러낸다. 떨어뜨린 폴더 자신은 건드리지 않는다 — 그래야
-숨긴 뒤에도 그 폴더를 다시 끌어다 놓아 되돌릴 수 있다.
 '''
 
 
@@ -16,10 +13,9 @@ import stat
 import subprocess
 
 
-# pythonw 에서 attrib 을 부를 때마다 콘솔 창이 번쩍인다.
 CREATE_NO_WINDOW = 0x08000000
 
-# 탐색기가 원래 숨겨 두는 파일이라 이것만으로 mixed 가 되면 안 된다.
+# already hidden by Explorer, not a sign of a partly hidden folder
 SHELL_FILES = ('desktop.ini', 'thumbs.db')
 
 
@@ -43,7 +39,6 @@ def search_subpath(path, pattern='*'):
 
 
 def apply(hide, params, on_progress=None):
-    '''실패한 attrib 호출 수를 돌려준다.'''
     sign = '+' if hide else '-'
     failed = 0
     for index, v in enumerate(params):
@@ -56,7 +51,6 @@ def apply(hide, params, on_progress=None):
 
 
 def get_state(rootdir):
-    '''바로 아래 항목만 본다. 숨기기는 늘 통째로 하므로 첫 층이 전체를 대변한다.'''
     hidden = visible = 0
     try:
         for entry in os.scandir(rootdir):

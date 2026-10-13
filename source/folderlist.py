@@ -19,14 +19,6 @@ from utilities import mix
 
 class FolderList(Canvas):
 
-    '''떨어뜨린 폴더를 한 줄에 하나씩. 끌어다 놓는 자리이기도 해서 파일이 위에
-    떠 있는 동안 테두리가 밝아진다.
-
-    디자인 툴의 레이어 목록처럼 줄마다 왼쪽에 눈이 있다. 누르면 그 폴더만
-    숨기고 드러낸다. 숨긴 줄은 탐색기가 숨김 파일을 그리듯 흐리게 그린다 —
-    색만이 아니라 눈의 사선으로도 갈린다. 손이 얹힌 줄에는 오른쪽 끝에 × 가
-    떠서 목록에서 뺀다.'''
-
     ROW_HEIGHT = 34
     INSET = 6
     PADDING = 8
@@ -40,7 +32,6 @@ class FolderList(Canvas):
     BAR_MIN = 30
     WHEEL_ROWS = 3
     MIN_HEIGHT = 140
-    # 숨긴 줄의 글자는 바탕 쪽으로 이만큼 물러난다.
     HIDDEN_FADE = 0.55
 
     def __init__(self, parent, theme, empty='', on_toggle=None, on_remove=None):
@@ -76,7 +67,6 @@ class FolderList(Canvas):
             self.Refresh()
 
     def set_enabled(self, enabled, working=()):
-        '''돌고 있는 동안은 누름을 받지 않고, 돌고 있는 줄은 눈 대신 … 을 그린다.'''
         self.enabled = enabled
         self.working = tuple(working)
         self.Refresh()

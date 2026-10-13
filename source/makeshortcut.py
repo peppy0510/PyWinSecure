@@ -4,8 +4,6 @@
 '''
 author: Taehong Kim
 email: peppy0510@hotmail.com
-
-Puts a Start menu link that runs source/main.pyw through pythonw.exe.
 '''
 
 

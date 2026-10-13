@@ -42,7 +42,6 @@ class SettingsBox(wx.Panel):
                                 APP_AUTHOR)
         self.cards = (self.ontop, self.dark, self.shortcut, self.about)
 
-        # 0.1.x 부터 기본이 항상 위였다.
         self.ontop.SetValue(settings.get('on_top', True))
         self.dark.SetValue(settings.get('theme', 'dark') == 'dark')
 

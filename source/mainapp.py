@@ -28,13 +28,11 @@ from utilities import save_settings
 HOVER_INTERVAL = 120
 SAVE_DELAY = 600
 DEFAULT_SIZE = (460, 600)
-# 설정 페이지가 잘리지 않는 높이다(실측: 내용 356 + 헤더 32 + 창틀 14).
+# settings page 356 + header 32 + frame 14
 MIN_SIZE = (380, 402)
 
-# 캡션을 떼고 그 자리를 직접 그린다. 크기 조절과 스냅은 그대로 남는다.
 FRAME_STYLE = wx.DEFAULT_FRAME_STYLE & ~wx.CAPTION
 
-# 기억된 위치가 이만큼도 화면에 안 걸리면 사라진 모니터로 본다.
 MIN_VISIBLE_WIDTH = 120
 MIN_VISIBLE_HEIGHT = 32
 
@@ -46,7 +44,6 @@ MENU_ITEMS = (('Folders', 'lock'), None, ('Settings', 'settings'))
 class MainFrame(wx.Frame):
 
     stored_rect = None
-    # 흉내 낸 최대화 이전의 자리. None 이면 최대화 상태가 아니다.
     restore_bounds = None
     ready = False
     saver = None
@@ -71,7 +68,6 @@ class MainFrame(wx.Frame):
 
         self.titlebar = TitleBar(self, theme, self.on_menu, self.toggle_maximize)
         self.sidemenu = SideMenu(self, theme, MENU_ITEMS, self.on_select)
-        # 서랍은 페이지 위에 떠 있다. 페이지 쪽이 형제를 클립해 주어야 살아남는다.
         apply_clip_siblings(self.book)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -97,7 +93,7 @@ class MainFrame(wx.Frame):
         stored = settings.get('page')
         index = PAGE_KEYS.index(stored) if stored in PAGE_KEYS else 0
         self.book.SetSelection(index)
-        # 구분선이 하나 끼어 있어 항목의 차례와 페이지의 차례가 그 뒤로 어긋난다.
+        # skip the divider
         self.sidemenu.set_selection(index if not index else index + 1)
 
     def get_page_key(self):
@@ -154,8 +150,7 @@ class MainFrame(wx.Frame):
         self.store_settings()
 
     def toggle_maximize(self):
-        '''캡션이 없는 창을 Windows 가 최대화하면 보이지 않는 여백만큼 화면
-        밖으로 넘치고 작업 표시줄까지 덮는다. 작업 영역에 맞춰 직접 채운다.'''
+        # Windows maximizes a captionless frame over the taskbar
         if self.restore_bounds is not None:
             bounds, self.restore_bounds = self.restore_bounds, None
             self.SetRect(wx.Rect(*bounds))
@@ -200,7 +195,6 @@ class MainFrame(wx.Frame):
         event.Skip()
 
     def on_tick(self, event):
-        # 서랍은 바깥 누름·ESC·캡처 잃음으로도 닫힌다. 햄버거 표시는 여기서 따라간다.
         self.titlebar.set_menu_open(self.sidemenu.is_open())
 
     def store_settings(self):
@@ -221,7 +215,7 @@ class MainFrame(wx.Frame):
         save_settings(settings)
 
     def on_close(self, event):
-        # 도중에 닫으면 폴더가 반만 숨겨진 채 남는다. 끝날 때까지 기다리게 한다.
+        # closing midway leaves a folder half hidden
         if self.securebox.busy and event.CanVeto():
             self.securebox.hold_close()
             event.Veto()
@@ -229,10 +223,9 @@ class MainFrame(wx.Frame):
         self.timer.Stop()
         if self.saver is not None and self.saver.IsRunning():
             self.saver.Stop()
-        # 마우스를 잡은 채로 창이 사라지면 나중에 죽는다. 먼저 놓게 한다.
+        # release the mouse capture before the frame goes
         self.sidemenu.close()
-        # close 가 닫는 애니메이션 타이머를 켠다. 창이 사라진 뒤 그 타이머가 오면
-        # 힙이 깨져 종료 코드 0xc0000374 로 죽는다.
+        # close() starts the slide timer, which crashes (0xc0000374) after destroy
         self.sidemenu.timer.Stop()
         if self.restore_bounds is not None:
             self.stored_rect = list(self.restore_bounds)

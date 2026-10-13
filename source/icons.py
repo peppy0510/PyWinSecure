@@ -4,9 +4,6 @@
 '''
 author: Taehong Kim
 email: peppy0510@hotmail.com
-
-타이틀바와 사이드 메뉴가 쓰는 선 아이콘. 모두 size 를 한 변으로 하는
-정사각형 안에 (cx, cy) 를 가운데 두고 그린다.
 '''
 
 
@@ -35,7 +32,6 @@ def draw_lock(gc, cx, cy, size, colour, width):
     gc.DrawRoundedRectangle(cx - body_width / 2, body_top, body_width, body_height,
                             size * 0.08)
 
-    # 고리는 몸통 위로 반원을 올리고 양 끝을 몸통까지 곧게 내린다.
     arch = size * 0.22
     arch_cy = cy - size * 0.20
     path = gc.CreatePath()
@@ -66,8 +62,7 @@ def draw_eye_off(gc, cx, cy, size, colour, width):
 
 
 def draw_settings(gc, cx, cy, size, colour, width):
-    '''원에서 뻗는 살로 그리면 이 크기에서는 톱니바퀴가 아니라 해로 읽힌다.
-    바깥선을 톱니 모양 그대로 두르고 가운데 축만 남긴다.'''
+    # spokes from a circle read as a sun at this size, so trace the teeth outline
     outer, inner, hub = size * 0.48, size * 0.33, size * 0.15
     steps = 16
 
@@ -102,7 +97,6 @@ def draw_maximize(gc, cx, cy, size, colour, width):
 
 def draw_restore(gc, cx, cy, size, colour, width):
     gc.DrawRectangle(cx - size * 0.38, cy - size * 0.22, size * 0.60, size * 0.60)
-    # 뒤 사각형은 앞 사각형에 가려지는 두 변을 빼고 ㄱ 자로만 그린다.
     path = gc.CreatePath()
     path.MoveToPoint(cx - size * 0.22, cy - size * 0.22)
     path.AddLineToPoint(cx - size * 0.22, cy - size * 0.38)

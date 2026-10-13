@@ -4,9 +4,6 @@
 '''
 author: Taehong Kim
 email: peppy0510@hotmail.com
-
-네이티브 wx.Button / wx.Slider 는 Windows 에서 배경색을 따르지 않아 다크 테마에서
-혼자 밝게 남는다. 캔버스로 직접 그려 대체한다.
 '''
 
 
@@ -23,7 +20,6 @@ from utilities import shade
 
 
 class Pressable(Canvas):
-    '''캔버스 카드들이 공유하는 hover / press 상태.'''
 
     def __init__(self, parent, theme, on_click):
         super().__init__(parent, theme)
@@ -57,14 +53,8 @@ class Pressable(Canvas):
 
 
 class CardBase(Pressable):
-    '''Windows 11 설정과 같은 카드 한 줄. 바탕과 제목·설명은 여기서 그리고,
-    오른쪽 끝의 조작부만 자식이 채운다. 조작부가 자리를 먼저 잡고 남는 왼쪽을
-    글자가 쓰므로, 제목은 조작부가 넓어지는 만큼 말없이 잘린다.'''
-
     PADDING = 14
-    # 제목이 조작부에 닿지 않게 두는 자리.
     LABEL_GAP = 12
-    # 눌러도 값이 바뀌지 않는 카드는 손이 얹혀도 밝아지지 않아야 한다.
     reactive = True
     tone = 'dim'
 
@@ -76,7 +66,7 @@ class CardBase(Pressable):
         self.SetMinSize(wx.Size(-1, CARD_HEIGHT))
 
     def activate(self):
-        '''카드를 눌렀을 때 값을 바꾸는 자리.'''
+        pass
 
     def notify(self):
         self.Refresh()
@@ -130,13 +120,10 @@ class CardBase(Pressable):
         return self.theme[self.tone]
 
     def draw_control(self, gc, width, height):
-        '''오른쪽 끝에서부터 조작부를 그리고 그 왼쪽 끝 x 를 돌려준다.'''
         return width - self.PADDING
 
 
 class NoticeCard(CardBase):
-    '''읽기만 하는 카드. 화면 정보와 "이 모니터는 DDC/CI 를 열지 않는다" 를 알린다.'''
-
     reactive = False
 
     def __init__(self, parent, theme, label, description, tone='dim'):
@@ -145,8 +132,6 @@ class NoticeCard(CardBase):
 
 
 class SettingCard(CardBase):
-    '''오른쪽 끝에 On/Off 토글을 둔 카드. 카드 어디를 눌러도 토글된다.'''
-
     TRACK_WIDTH = 38
     TRACK_HEIGHT = 20
 
@@ -170,7 +155,7 @@ class SettingCard(CardBase):
         gc.SetFont(get_font(9), wx.Colour(theme['dim']))
         state_width, state_height = gc.GetTextExtent(state)[:2]
         gc.DrawText(state, switch_left - state_width - 8, (height - state_height) / 2)
-        # 세로 자리는 반 칸 없이 딱 떨어져야 알약 위아래가 흐려지지 않는다.
+        # a half-pixel top blurs the pill edges
         self.draw_switch(gc, switch_left, round((height - self.TRACK_HEIGHT) / 2))
         return switch_left - state_width - 8
 
@@ -179,8 +164,7 @@ class SettingCard(CardBase):
         radius = self.TRACK_HEIGHT / 2
         gc.SetPen(wx.TRANSPARENT_PEN)
 
-        # 선을 두르면 1px 획이 화소 경계에 반씩 걸려 아래쪽 곡선이 각져 보이고
-        # 핸들과도 반 칸 어긋난다. 채운 알약 위에 한 칸 작은 알약을 겹쳐 테를 만든다.
+        # a stroked rim straddles pixels, so fill a 1px smaller pill over a full one
         if self.value:
             gc.SetBrush(wx.Brush(wx.Colour(theme['accent'])))
             gc.FillPath(self.get_track(gc, left, top, 0))
@@ -196,8 +180,7 @@ class SettingCard(CardBase):
         gc.DrawEllipse(x - knob, top + radius - knob, knob * 2, knob * 2)
 
     def get_track(self, gc, left, top, inset):
-        '''반원 둘을 직선으로 이은 알약. 둥근 사각형은 반지름이 높이의 절반일 때
-        호와 직선이 만나는 자리가 각져 보인다.'''
+        # rounded rectangles kink where arc meets line when radius is half the height
         left, top = left + inset, top + inset
         width, height = self.TRACK_WIDTH - inset * 2, self.TRACK_HEIGHT - inset * 2
         radius = height / 2
@@ -214,8 +197,6 @@ class SettingCard(CardBase):
 
 
 class ButtonCard(CardBase):
-    '''오른쪽 끝에 누름 단추 하나. 값이 아니라 한 번의 동작을 맡는다.'''
-
     BUTTON_HEIGHT = 26
     BUTTON_PADDING = 16
     BUTTON_RADIUS = 5
@@ -272,8 +253,6 @@ class ButtonCard(CardBase):
 
 
 class ButtonsCard(CardBase):
-    '''오른쪽 끝에 누름 단추 여럿. 손이 얹힌 단추만 밝아진다.'''
-
     BUTTON_HEIGHT = 26
     BUTTON_PADDING = 16
     BUTTON_RADIUS = 5
@@ -286,7 +265,6 @@ class ButtonsCard(CardBase):
         self.enabled = True
         dc = wx.MemoryDC(wx.Bitmap(1, 1))
         dc.SetFont(get_font(9))
-        # 나란한 단추는 글자 길이와 상관없이 같은 폭으로 세운다.
         width = max(dc.GetTextExtent(caption)[0] for caption, action in buttons)
         self.widths = [width + self.BUTTON_PADDING * 2] * len(buttons)
         self.Bind(wx.EVT_MOTION, lambda event: self.Refresh())

@@ -29,7 +29,6 @@ ADD_HINT = 'Or drop folders onto the list above'
 ADD_NO_FOLDER = 'Only folders can be added'
 ALL_HINT = 'Click an eye to hide or show one folder'
 
-# attrib 한 번이 수십 ms 라 몇 번에 한 번만 알려도 막대처럼 움직인다.
 PROGRESS_STEP = 10
 
 
@@ -72,7 +71,6 @@ class SecureBox(Canvas):
         self.on_change = on_change
         self.busy = False
         self.states = []
-        # 빠진 USB·끊긴 공유 폴더도 목록에서 지우지 않는다. 돌릴 때만 거른다.
         self.folders = list(settings.get('folders', []))
 
         self.files = FolderList(self, theme, EMPTY_IDLE, self.on_toggle, self.on_remove)
@@ -83,7 +81,6 @@ class SecureBox(Canvas):
                                 ('Hide', self.on_hide_all)))
         self.cards = (self.add, self.all)
 
-        # 목록 칸만이 아니라 페이지 어디에 놓아도 받는다.
         for window in (self, self.files):
             window.SetDropTarget(FolderDrop(self))
 
@@ -114,7 +111,7 @@ class SecureBox(Canvas):
             count = wx.StaticText(self, label='')
             count.SetFont(get_font(9))
             row.AddStretchSpacer()
-            # 굵기가 달라 위를 맞추면 어긋난다. 밑줄을 맞춘다.
+            # align baselines, the fonts differ in weight
             row.Add(count, 0, wx.RIGHT | wx.ALIGN_BOTTOM, MARGIN + TITLE_INSET)
 
         sizer.Add(row, 0, wx.EXPAND)
@@ -126,7 +123,6 @@ class SecureBox(Canvas):
 
     def get_item(self, path):
         name = os.path.basename(os.path.normpath(path))
-        # 드라이브 루트는 이름이 비어 경로 자체를 이름으로 쓴다.
         if not name:
             return (path, '')
         return (name, os.path.dirname(os.path.normpath(path)))
@@ -197,7 +193,6 @@ class SecureBox(Canvas):
         self.on_change()
 
     def on_toggle(self, index):
-        # 반만 숨겨진 폴더는 숨기는 쪽으로 마저 끝낸다.
         hide = self.states[index] != 'hidden'
         self.start(hide, [index])
 
@@ -254,7 +249,7 @@ class SecureBox(Canvas):
             self.set_status('Could not read the folders', 'warn')
             return
 
-        # attrib 을 부른 횟수라 항목 수와 다르다. 실패한 몫만 숫자로 말한다.
+        # counts attrib calls, not folders
         count, total, failed = result
         if failed:
             self.set_status('%s of %s steps failed' % (format_count(failed),

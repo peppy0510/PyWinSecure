@@ -4,12 +4,6 @@
 '''
 author: Taehong Kim
 email: peppy0510@hotmail.com
-
-창의 캡션을 떼어내고 그 자리를 앱이 직접 그린다. 왼쪽 끝에 햄버거,
-그 옆에 아이콘과 제목, 오른쪽 끝에 최소화·최대화·닫기를 둔다.
-
-끌기는 우리가 계산하지 않고 WM_NCLBUTTONDOWN 을 캡션으로 보내 Windows 에
-맡긴다. 그래야 화면 가장자리로 던지는 스냅까지 그대로 따라온다.
 '''
 
 
@@ -34,8 +28,7 @@ ICON_SIZE = 16
 GLYPH_SIZE = 15
 MENU_GLYPH_SIZE = 14
 
-# 누름 자리는 칸을 꽉 채우지 않고 한 뼘 안으로 들여 모서리를 굴린다. 위쪽 띠는
-# DWM 이 칠하는 자리라 우리가 닿을 수 없어, 꽉 채우면 위가 잘린 채로 보인다.
+# inset, the DWM band at the top would clip a full-height box
 BUTTON_BOX = (34, 25)
 BUTTON_RADIUS = 4
 
@@ -70,9 +63,7 @@ class TitleBar(Canvas):
         return image.Scale(ICON_SIZE, ICON_SIZE, wx.IMAGE_QUALITY_HIGH).ConvertToBitmap()
 
     def get_cap_height(self):
-        '''캔버스 위에 남아 있는 DWM 띠의 높이. 그 띠까지가 눈에 보이는 헤더라,
-        요소는 캔버스가 아니라 띠를 포함한 전체의 한가운데에 놓아야 위아래
-        여백이 같아진다. 한 번 재고 기억해 둔다.'''
+        # the visible header includes the DWM band above the canvas
         if self.cap_height is None:
             frame = self.GetTopLevelParent()
             top = frame.GetScreenRect().y + get_frame_margins(frame)[1]
@@ -88,7 +79,6 @@ class TitleBar(Canvas):
                        round(middle - BUTTON_BOX[1] / 2), *BUTTON_BOX)
 
     def get_zones(self):
-        '''왼쪽 끝의 메뉴와 오른쪽 끝의 캡션 버튼. 나머지는 끌기 영역이다.'''
         width, height = self.GetClientSize()
         zones = [('menu', wx.Rect(0, 0, CAPTION_WIDTH, height))]
         for index, name in enumerate(('close', 'maximize', 'minimize')):
@@ -108,8 +98,7 @@ class TitleBar(Canvas):
         if visible == self.visible:
             return False
         self.visible = visible
-        # 숨어 있는 동안의 움직임은 흘려보냈다. 나타나는 순간 지금 커서 자리로
-        # 다시 잡아야, 창에 들어와 버튼 위에 바로 멈춘 손이 아무 반응도 못 받는 일이 없다.
+        # motion while hidden was dropped
         self.hovered = self.hit_test(
             self.ScreenToClient(wx.GetMousePosition())) if visible else None
         self.Refresh()
@@ -126,7 +115,7 @@ class TitleBar(Canvas):
             self.Refresh()
 
     def start_drag(self):
-        '''Windows 에 캡션을 눌렀다고 알린다. 이 호출 안에서 끌기가 끝난다.'''
+        # let Windows drag so edge snapping still works
         try:
             ctypes.windll.user32.ReleaseCapture()
             ctypes.windll.user32.SendMessageW(
