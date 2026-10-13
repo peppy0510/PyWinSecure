@@ -16,6 +16,7 @@ from controls import ButtonCard
 from controls import ButtonsCard
 from folderlist import FolderList
 from utilities import Canvas
+from utilities import call_painted
 from utilities import get_font
 
 
@@ -222,15 +223,15 @@ class SecureBox(Canvas):
     def run(self, hide, folders):
         def on_progress(done, total):
             if done % PROGRESS_STEP == 0 or done == total:
-                wx.CallAfter(self.take_progress, hide, done, total)
+                call_painted(self, self.take_progress, hide, done, total)
 
         try:
             params = attributes.get_pathparams(folders)
-            wx.CallAfter(self.take_progress, hide, 0, len(params))
+            call_painted(self, self.take_progress, hide, 0, len(params))
             result = (len(folders), len(params), attributes.apply(hide, params, on_progress))
         except Exception:
             result = None
-        wx.CallAfter(self.take_done, hide, result)
+        call_painted(self, self.take_done, hide, result)
 
     def take_progress(self, hide, done, total):
         if not self or not self.busy:
