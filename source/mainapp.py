@@ -36,8 +36,6 @@ FRAME_STYLE = wx.DEFAULT_FRAME_STYLE & ~wx.CAPTION
 MIN_VISIBLE_WIDTH = 120
 MIN_VISIBLE_HEIGHT = 32
 
-PAGE_KEYS = ('folders', 'settings')
-
 MENU_ITEMS = (('Folders', 'lock'), None, ('Settings', 'settings'))
 
 
@@ -86,19 +84,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.on_close)
         self.timer.Start(HOVER_INTERVAL)
         self.restore_rect(settings)
-        self.restore_page(settings)
         self.ready = True
-
-    def restore_page(self, settings):
-        stored = settings.get('page')
-        index = PAGE_KEYS.index(stored) if stored in PAGE_KEYS else 0
-        self.book.SetSelection(index)
-        # skip the divider
-        self.sidemenu.set_selection(index if not index else index + 1)
-
-    def get_page_key(self):
-        index = self.book.GetSelection()
-        return PAGE_KEYS[index] if 0 <= index < len(PAGE_KEYS) else PAGE_KEYS[0]
 
     def is_rect_visible(self, rect):
         for index in range(wx.Display.GetCount()):
@@ -208,7 +194,6 @@ class MainFrame(wx.Frame):
         settings = {
             'theme': self.theme_name,
             'on_top': self.settingsbox.ontop.GetValue(),
-            'page': self.get_page_key(),
             'rect': self.stored_rect,
         }
         settings.update(self.securebox.store())
