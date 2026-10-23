@@ -11,7 +11,7 @@ AppPublisher="Taehong Kim"
 UninstallDisplayIcon="{app}\PyWinSecure.exe"
 Compression=lzma2/max
 SolidCompression=yes
-OutputDir="dist"
+OutputDir=".dist"
 OutputBaseFilename="PyWinSecure-0.2.0-Setup"
 ; VersionInfoVersion="0.2.0"
 VersionInfoProductVersion="0.2.0"
@@ -20,7 +20,7 @@ VersionInfoCopyright="Taehong Kim"
 ArchitecturesInstallIn64BitMode="x64compatible"
 
 [Files]
-Source: "dist\*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: ".dist\*"; DestDir: "{app}"; Flags: recursesubdirs
 
 [Icons]
 Name: "{group}\PyWinSecure"; Filename: "{app}\PyWinSecure.exe"
