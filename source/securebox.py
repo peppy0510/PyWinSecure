@@ -34,7 +34,7 @@ PROGRESS_STEP = 10
 
 
 def format_count(count):
-    return '{:,}'.format(count)
+    return f'{count:,}'
 
 
 def get_key(path):
@@ -135,10 +135,10 @@ class SecureBox(Canvas):
         count = len(self.folders)
         label = ''
         if count:
-            label = '%s folder%s' % (format_count(count), '' if count == 1 else 's')
+            label = f'{format_count(count)} folder{"" if count == 1 else "s"}'
             hidden = self.states.count('hidden')
             if hidden:
-                label += ' · %s hidden' % format_count(hidden)
+                label += f' · {format_count(hidden)} hidden'
         self.files_count.SetLabel(label)
         self.Layout()
         self.sync_actions()
@@ -236,8 +236,8 @@ class SecureBox(Canvas):
     def take_progress(self, hide, done, total):
         if not self or not self.busy:
             return
-        self.set_status('%s · step %s of %s' % ('Hiding' if hide else 'Showing',
-                                                format_count(done), format_count(total)))
+        self.set_status(f'{"Hiding" if hide else "Showing"} · step {format_count(done)} of '
+                        f'{format_count(total)}')
 
     def take_done(self, hide, result):
         if not self:
@@ -253,12 +253,10 @@ class SecureBox(Canvas):
         # counts attrib calls, not folders
         count, total, failed = result
         if failed:
-            self.set_status('%s of %s steps failed' % (format_count(failed),
-                                                       format_count(total)), 'warn')
+            self.set_status(f'{format_count(failed)} of {format_count(total)} steps failed', 'warn')
             return
-        self.set_status('%s %s folder%s' % ('Hid' if hide else 'Showed',
-                                            format_count(count),
-                                            '' if count == 1 else 's'), 'done')
+        self.set_status(f'{"Hid" if hide else "Showed"} {format_count(count)} '
+                        f'folder{"" if count == 1 else "s"}', 'done')
 
     def hold_close(self):
         self.set_status('Wait until this finishes to close', 'warn')

@@ -38,7 +38,7 @@ class SettingsBox(wx.Panel):
         self.shortcut = ButtonCard(self, theme, 'Start menu',
                                    'Put a shortcut in the Start menu',
                                    'Create', self.on_shortcut)
-        self.about = NoticeCard(self, theme, '%s %s' % (APP_NAME, APP_VERSION),
+        self.about = NoticeCard(self, theme, f'{APP_NAME} {APP_VERSION}',
                                 APP_AUTHOR)
         self.cards = (self.ontop, self.dark, self.shortcut, self.about)
 

@@ -26,7 +26,7 @@ class ShortCut():
         if not name:
             return path
         if not name.lower().endswith('.lnk'):
-            name = '{}.lnk'.format(name)
+            name = f'{name}.lnk'
         return os.path.join(path, name)
 
     @classmethod
@@ -35,7 +35,7 @@ class ShortCut():
         if not name:
             return path
         if not name.lower().endswith('.lnk'):
-            name = '{}.lnk'.format(name)
+            name = f'{name}.lnk'
         return os.path.join(path, name)
 
     @classmethod
@@ -44,7 +44,7 @@ class ShortCut():
         if not name:
             return path
         if not name.lower().endswith('.lnk'):
-            name = '{}.lnk'.format(name)
+            name = f'{name}.lnk'
         return os.path.join(path, name)
 
     @classmethod
@@ -62,7 +62,7 @@ class ShortCut():
         ext = os.path.splitext(path)[-1][1:].lower()
         if ext == 'url':
             with open(path, 'w') as file:
-                file.write('[InternetShortcut]\nURL=%s' % target_path)
+                file.write(f'[InternetShortcut]\nURL={target_path}')
             return
 
         shell = Dispatch('WScript.Shell')

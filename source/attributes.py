@@ -42,7 +42,7 @@ def apply(hide, params, on_progress=None):
     sign = '+' if hide else '-'
     failed = 0
     for index, v in enumerate(params):
-        command = 'attrib {0}s {0}h "{1}"'.format(sign, v)
+        command = f'attrib {sign}s {sign}h "{v}"'
         if subprocess.call(command, shell=True, creationflags=CREATE_NO_WINDOW) != 0:
             failed += 1
         if on_progress is not None:

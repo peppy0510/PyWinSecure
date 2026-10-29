@@ -23,19 +23,19 @@ def create(path):
     source = os.path.dirname(os.path.abspath(__file__))
     root = os.path.dirname(source)
     icon = os.path.join(root, 'assets', 'icon', 'icon.ico')
+    script = os.path.join(source, 'main.pyw')
 
     ShortCut.create(
         path,
         target_path=get_pythonw(),
-        arguments='"%s"' % os.path.join(source, 'main.pyw'),
+        arguments=f'"{script}"',
         working_directory=source,
         icon=icon if os.path.exists(icon) else '')
     return path
 
 
 def main():
-    print('[ SHORTCUT CREATED ] [ {} ]'.format(
-        create(ShortCut.get_user_programs_path(APP_NAME))))
+    print(f'[ SHORTCUT CREATED ] [ {create(ShortCut.get_user_programs_path(APP_NAME))} ]')
 
 
 if __name__ == '__main__':
