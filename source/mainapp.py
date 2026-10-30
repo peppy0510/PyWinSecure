@@ -28,8 +28,8 @@ from utilities import save_settings
 HOVER_INTERVAL = 120
 SAVE_DELAY = 600
 DEFAULT_SIZE = (460, 600)
-# settings page 356 + header 32 + frame 14
-MIN_SIZE = (380, 402)
+# settings page 450 + header 32 + frame 14
+MIN_SIZE = (380, 496)
 
 FRAME_STYLE = wx.DEFAULT_FRAME_STYLE & ~wx.CAPTION
 
@@ -48,6 +48,8 @@ class MainFrame(wx.Frame):
 
     def __init__(self):
         settings = load_settings()
+        if not settings.get('remember', True):
+            settings.pop('folders', None)
         super().__init__(None, title=APP_NAME, size=wx.Size(*DEFAULT_SIZE),
                          style=FRAME_STYLE)
         apply_no_caption(self)
@@ -195,8 +197,10 @@ class MainFrame(wx.Frame):
             'theme': self.theme_name,
             'on_top': self.settingsbox.ontop.GetValue(),
             'rect': self.stored_rect,
+            'remember': self.settingsbox.remember.GetValue(),
         }
-        settings.update(self.securebox.store())
+        if settings['remember']:
+            settings.update(self.securebox.store())
         save_settings(settings)
 
     def on_close(self, event):

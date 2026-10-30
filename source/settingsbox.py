@@ -35,20 +35,24 @@ class SettingsBox(wx.Panel):
                                  'Keep the window above others', on_change)
         self.dark = SettingCard(self, theme, 'Dark theme',
                                 'Use the dark colour scheme', on_change)
+        self.remember = SettingCard(self, theme, 'Remember folders',
+                                    'Keep the folder list for next time', on_change)
         self.shortcut = ButtonCard(self, theme, 'Start menu',
                                    'Put a shortcut in the Start menu',
                                    'Create', self.on_shortcut)
         self.about = NoticeCard(self, theme, f'{APP_NAME} {APP_VERSION}',
                                 APP_AUTHOR)
-        self.cards = (self.ontop, self.dark, self.shortcut, self.about)
+        self.cards = (self.ontop, self.dark, self.remember, self.shortcut, self.about)
 
         self.ontop.SetValue(settings.get('on_top', True))
         self.dark.SetValue(settings.get('theme', 'dark') == 'dark')
+        self.remember.SetValue(settings.get('remember', True))
 
         self.groups = []
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.AddSpacer(MARGIN)
         for title, cards in (('Window', (self.ontop, self.dark)),
+                             ('Startup', (self.remember,)),
                              ('Shortcut', (self.shortcut,)),
                              ('About', (self.about,))):
             label = wx.StaticText(self, label=title)
