@@ -8,15 +8,19 @@ email: peppy0510@hotmail.com
 
 
 import makeshortcut
+import subprocess
 import wx
 
+from controls import AboutCard
 from controls import ButtonCard
-from controls import NoticeCard
 from controls import SettingCard
 from shortcut import ShortCut
 from utilities import APP_AUTHOR
+from utilities import APP_EMAIL
+from utilities import APP_HOME
 from utilities import APP_NAME
 from utilities import APP_VERSION
+from utilities import get_asset_path
 from utilities import get_font
 
 
@@ -40,8 +44,9 @@ class SettingsBox(wx.Panel):
         self.shortcut = ButtonCard(self, theme, 'Start menu',
                                    'Put a shortcut in the Start menu',
                                    'Create', self.on_shortcut)
-        self.about = NoticeCard(self, theme, f'{APP_NAME} {APP_VERSION}',
-                                APP_AUTHOR)
+        self.about = AboutCard(self, theme, f'{APP_NAME} {APP_VERSION}',
+                               (APP_AUTHOR, APP_EMAIL), 'GitHub', self.on_home,
+                               wx.Image(get_asset_path('icon', 'muteklab.png')))
         self.cards = (self.ontop, self.dark, self.remember, self.shortcut, self.about)
 
         self.ontop.SetValue(settings.get('on_top', True))
@@ -78,6 +83,10 @@ class SettingsBox(wx.Panel):
             return
         self.shortcut.set_label('Start menu', 'Shortcut created')
         self.shortcut.set_tone('done')
+
+    def on_home(self):
+        # explorer hands the link to the shell, so the browser does not inherit elevation
+        subprocess.Popen(['explorer', APP_HOME])
 
     def apply_theme(self, theme):
         self.SetBackgroundColour(wx.Colour(theme['bg']))

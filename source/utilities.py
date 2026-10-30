@@ -18,7 +18,9 @@ from ctypes import wintypes
 
 APP_NAME = 'PyWinSecure'
 APP_VERSION = '0.2.0'
-APP_AUTHOR = 'Taehong Kim · peppy0510@hotmail.com'
+APP_AUTHOR = 'Taehong Kim'
+APP_EMAIL = 'peppy0510@hotmail.com'
+APP_HOME = 'https://github.com/peppy0510'
 
 CARD_HEIGHT = 54
 CARD_RADIUS = 6

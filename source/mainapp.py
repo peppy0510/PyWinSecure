@@ -28,8 +28,8 @@ from utilities import save_settings
 HOVER_INTERVAL = 120
 SAVE_DELAY = 600
 DEFAULT_SIZE = (460, 600)
-# settings page 450 + header 32 + frame 14
-MIN_SIZE = (380, 496)
+# settings page 472 + header 32 + frame 14
+MIN_SIZE = (380, 518)
 
 FRAME_STYLE = wx.DEFAULT_FRAME_STYLE & ~wx.CAPTION
 

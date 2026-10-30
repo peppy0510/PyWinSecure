@@ -252,6 +252,69 @@ class ButtonCard(CardBase):
         return rect.x
 
 
+class AboutCard(ButtonCard):
+
+    HEIGHT = 76
+    LOGO_HEIGHT = 36
+    LOGO_GAP = 16
+    LINE_GAP = 2
+
+    def __init__(self, parent, theme, label, lines, caption, on_click, logo):
+        super().__init__(parent, theme, label, '', caption, on_click)
+        self.lines = lines
+        width = round(logo.GetWidth() * self.LOGO_HEIGHT / logo.GetHeight())
+        self.source = logo.Scale(width, self.LOGO_HEIGHT, wx.IMAGE_QUALITY_HIGH)
+        self.logo = self.paint_logo()
+        self.SetMinSize(wx.Size(-1, self.HEIGHT))
+
+    def set_theme(self, theme):
+        self.theme = theme
+        self.logo = self.paint_logo()
+        self.Refresh()
+
+    def paint_logo(self):
+        # the white half of the mark takes the text colour so it shows on light themes
+        image = self.source.Copy()
+        text = wx.Colour(self.theme['text'])
+        data = bytearray(image.GetData())
+        for index in range(0, len(data), 3):
+            if data[index] == 255 and data[index + 1] == 255:
+                data[index:index + 3] = bytes((text.Red(), text.Green(), text.Blue()))
+        alpha = image.GetAlpha()
+        # SetData drops the alpha channel
+        image.SetData(bytes(data))
+        image.SetAlpha(alpha)
+        return image.ConvertToBitmap()
+
+    def draw(self, gc, width, height):
+        gc.SetPen(wx.TRANSPARENT_PEN)
+        gc.SetBrush(wx.Brush(wx.Colour(self.get_fill())))
+        gc.DrawRoundedRectangle(0, 0, width, height, CARD_RADIUS)
+        draw_card_rim(gc, self.theme['rim'], 0, 0, width, height)
+
+        logo_width, logo_height = self.logo.GetWidth(), self.logo.GetHeight()
+        gc.DrawBitmap(self.logo, self.PADDING, round((height - logo_height) / 2),
+                      logo_width, logo_height)
+        left = self.PADDING + logo_width + self.LOGO_GAP
+        label_right = self.draw_control(gc, width, height) - self.LABEL_GAP
+        self.draw_lines(gc, height, left, max(0, label_right - left))
+
+    def draw_lines(self, gc, height, left, limit):
+        theme = self.theme
+        gc.SetFont(get_font(10), wx.Colour(theme['text']))
+        title_height = gc.GetTextExtent(self.label)[1]
+        gc.SetFont(get_font(8), wx.Colour(theme['dim']))
+        line_height = gc.GetTextExtent(self.label)[1]
+        top = (height - title_height - (line_height + self.LINE_GAP) * len(self.lines)) / 2
+        gc.SetFont(get_font(10), wx.Colour(theme['text']))
+        gc.DrawText(self.fit_text(gc, self.label, limit), left, top)
+        gc.SetFont(get_font(8), wx.Colour(theme['dim']))
+        top += title_height + self.LINE_GAP
+        for line in self.lines:
+            gc.DrawText(self.fit_text(gc, line, limit), left, top)
+            top += line_height + self.LINE_GAP
+
+
 class ButtonsCard(CardBase):
     BUTTON_HEIGHT = 26
     BUTTON_PADDING = 16

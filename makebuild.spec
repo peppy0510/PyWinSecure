@@ -62,7 +62,7 @@ a = Analysis([os.path.join('source', 'main.pyw')],
              hiddenimports=[])
 
 
-a.datas += grapdatas(path.assets, 'icon', 2, 'DATA', ['icon.ico', 'icon.png'])
+a.datas += grapdatas(path.assets, 'icon', 2, 'DATA', ['icon.ico', 'icon.png', 'muteklab.png'])
 
 print('-' * 100)
 for v in a.datas:
