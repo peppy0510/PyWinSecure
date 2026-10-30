@@ -255,8 +255,8 @@ class ButtonCard(CardBase):
 class AboutCard(ButtonCard):
 
     HEIGHT = 76
-    LOGO_HEIGHT = 36
-    LOGO_GAP = 16
+    LOGO_HEIGHT = 32
+    LOGO_GAP = 12
     LINE_GAP = 2
 
     def __init__(self, parent, theme, label, lines, caption, on_click, logo):
