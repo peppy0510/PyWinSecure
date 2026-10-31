@@ -18,5 +18,4 @@
 ## Supported platforms
 
 * Microsoft Windows 11
-* Other versions of Windows have not been tested yet.
 
