@@ -8,7 +8,7 @@
 
 ## Screenshot
 
-![screenshot](/assets/images/screenshot-001.png)
+![screenshot](/assets/images/screenshot-f81fbf02.png)
 
 ## How to install
 
