@@ -17,7 +17,7 @@ from ctypes import wintypes
 
 
 APP_NAME = 'PyWinSecure'
-APP_VERSION = '0.2.0'
+APP_VERSION = '0.3.0'
 APP_AUTHOR = 'Taehong Kim'
 APP_EMAIL = 'peppy0510@hotmail.com'
 APP_HOME = 'https://github.com/peppy0510/PyWinSecure'
@@ -57,6 +57,7 @@ THEMES = {
         'text': '#e6e9ed',
         'dim': '#8b929b',
         'accent': '#4c9aff',
+        'on_accent': '#101215',
         'control': '#2f333a',
         'warn': '#e0a458',
         'done': '#4c9aff',
@@ -71,6 +72,7 @@ THEMES = {
         'text': '#1d2126',
         'dim': '#6b727c',
         'accent': '#2b6cb0',
+        'on_accent': '#ffffff',
         'control': '#e8eaee',
         'warn': '#a2661f',
         'done': '#2b6cb0',

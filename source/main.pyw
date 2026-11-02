@@ -2,7 +2,7 @@
 
 
 __appname__ = 'PyWinSecure'
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 __author__ = 'Taehong Kim'
 __email__ = 'peppy0510@hotmail.com'
 __license__ = ''
@@ -10,6 +10,7 @@ __doc__ = '''
 '''
 
 
+import psutil
 import sys
 
 from wininstance import kill_existing_instances
@@ -31,11 +32,23 @@ if not sys.stdout:
     sys.stdout = stderr()
 
 
+def wait_for_previous():
+    # an update restarts the app; the new copy waits for the old one to save and go
+    if '--after' not in sys.argv:
+        return
+    try:
+        pid = int(sys.argv[sys.argv.index('--after') + 1])
+        psutil.Process(pid).wait(10)
+    except (ValueError, IndexError, psutil.Error):
+        pass
+
+
 def main():
     from mainapp import launch_mainapp
     launch_mainapp()
 
 
 if __name__ == '__main__':
+    wait_for_previous()
     kill_existing_instances()
     main()

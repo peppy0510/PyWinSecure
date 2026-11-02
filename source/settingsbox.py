@@ -30,10 +30,12 @@ TITLE_GAP = 8
 CARD_GAP = 4
 GROUP_GAP = 14
 
+UPDATE_NOTE = 'Look for a new release on GitHub'
+
 
 class SettingsBox(wx.Panel):
 
-    def __init__(self, parent, theme, settings, on_change):
+    def __init__(self, parent, theme, settings, on_change, on_check):
         super().__init__(parent)
         self.ontop = SettingCard(self, theme, 'Always on top',
                                  'Keep the window above others', on_change)
@@ -44,14 +46,20 @@ class SettingsBox(wx.Panel):
         self.shortcut = ButtonCard(self, theme, 'Start menu',
                                    'Put a shortcut in the Start menu',
                                    'Create', self.on_shortcut)
+        self.check_updates = SettingCard(self, theme, 'Check for updates',
+                                         'Once a day, a notice when one is out', on_change)
+        self.check_now = ButtonCard(self, theme, 'Latest release', UPDATE_NOTE,
+                                    'Check now', on_check)
         self.about = AboutCard(self, theme, f'{APP_NAME} {APP_VERSION}',
                                (APP_AUTHOR, APP_EMAIL), 'GitHub', self.on_home,
                                wx.Image(get_asset_path('icon', 'muteklab.png')))
-        self.cards = (self.ontop, self.dark, self.remember, self.shortcut, self.about)
+        self.cards = (self.ontop, self.dark, self.remember, self.shortcut,
+                      self.check_updates, self.check_now, self.about)
 
         self.ontop.SetValue(settings.get('on_top', True))
         self.dark.SetValue(settings.get('theme', 'dark') == 'dark')
         self.remember.SetValue(settings.get('remember', True))
+        self.check_updates.SetValue(settings.get('update_check', True))
 
         self.groups = []
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -59,6 +67,7 @@ class SettingsBox(wx.Panel):
         for title, cards in (('Window', (self.ontop, self.dark)),
                              ('Startup', (self.remember,)),
                              ('Shortcut', (self.shortcut,)),
+                             ('Updates', (self.check_updates, self.check_now)),
                              ('About', (self.about,))):
             label = wx.StaticText(self, label=title)
             label.SetFont(get_font(10, bold=True))
