@@ -19,6 +19,26 @@ def get_pythonw():
     return path if os.path.exists(path) else sys.executable
 
 
+START_MENU = os.path.join(os.path.expanduser('~'), 'AppData', 'Roaming', 'Microsoft', 'Windows',
+                          'Start Menu')
+
+
+def get_start_menu_paths():
+    # Create puts it in Programs; PyWinClock used to put it in the Start menu root
+    return (os.path.join(START_MENU, 'Programs', f'{APP_NAME}.lnk'),
+            os.path.join(START_MENU, f'{APP_NAME}.lnk'))
+
+
+def has_start_menu():
+    return any(os.path.exists(path) for path in get_start_menu_paths())
+
+
+def remove_start_menu():
+    for path in get_start_menu_paths():
+        if os.path.exists(path):
+            os.remove(path)
+
+
 def create(path):
     source = os.path.dirname(os.path.abspath(__file__))
     root = os.path.dirname(source)
