@@ -10,6 +10,8 @@ __doc__ = '''
 '''
 
 
+import vcruntime  # noqa # first: stops before wx when the C++ runtime is missing
+
 import psutil
 import sys
 
