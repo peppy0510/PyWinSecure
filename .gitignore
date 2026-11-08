@@ -1,12 +1,16 @@
-__pycache__/
+*/__pycache__
 */__test__
 *.txt
 *.pyc
 *.pyo
-/.dist
-/.build
+*.log
 /.venv
+.dist
+.build
+source/.dist
+source/.build
 desktop.ini
-
-# AI assistant notes — keep local, do not publish
+.sublime-workspace
+*.sublime-workspace
+*.sublime-project
 /CLAUDE.md
