@@ -182,6 +182,7 @@ class MainFrame(wx.Frame):
         event.Skip()
 
     def on_settings(self):
+        self.updater.enabled = self.settingsbox.check_updates.GetValue()
         style = self.GetWindowStyle()
         if self.settingsbox.ontop.GetValue():
             self.SetWindowStyle(style | wx.STAY_ON_TOP)
@@ -202,7 +203,7 @@ class MainFrame(wx.Frame):
         self.titlebar.set_menu_open(self.sidemenu.is_open())
         if self.closing and not self.securebox.busy:
             self.finish_update()
-        self.updater.tick(self.settingsbox.check_updates.GetValue())
+        self.updater.tick()
 
     def fit_notice(self):
         # the settings page has no room to give, so the notice adds to the height

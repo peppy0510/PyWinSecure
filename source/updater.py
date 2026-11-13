@@ -66,6 +66,7 @@ def is_newer(version, current=APP_VERSION):
 
 
 def clean_notes(body):
+    '''a release body in Markdown as plain lines'''
     lines = []
     for line in HTML_COMMENT.sub('', body or '').splitlines():
         line = MARKDOWN_HEADING.sub('', line)
@@ -82,13 +83,14 @@ def clean_notes(body):
 
 
 def fetch_release():
+    '''the latest release, or None while there is none'''
     request = urllib.request.Request(RELEASE_URL, headers={
         'User-Agent': APP_NAME, 'Accept': 'application/vnd.github+json'})
     try:
         with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
             data = json.load(response)
     except urllib.error.HTTPError as error:
-        # no release yet
+        # a private repository answers a request without a token the same way
         if error.code == 404:
             return None
         raise
@@ -125,6 +127,7 @@ def read_git(root, *arguments):
 
 
 def can_pull(root):
+    '''a clean checkout of the release branch, following its remote'''
     if not os.path.isdir(os.path.join(root, '.git')) or not shutil.which('git'):
         return False
     if read_git(root, 'symbolic-ref', '--short', 'HEAD') != RELEASE_BRANCH:
@@ -136,6 +139,7 @@ def can_pull(root):
 
 
 def get_update_kind():
+    '''how this copy updates: its installer, a pull of its checkout or by hand from the page'''
     if getattr(sys, 'frozen', False):
         return 'installer'
     return 'git' if can_pull(get_source_root()) else 'page'
@@ -206,7 +210,7 @@ def get_launcher_pid():
 
 def restart_source():
     script = os.path.join(get_source_root(), 'source', 'main.pyw')
-    # the new copy waits for this one to let go; the instance check reads its cwd
+    # the new copy waits for this one to let go before its instance check
     subprocess.Popen([sys.executable, script, '--after', str(get_launcher_pid())],
                      cwd=os.path.dirname(script))
 
@@ -263,9 +267,11 @@ def launch_installer(path):
 
 
 class Updater:
+    '''checks once a day for a newer release; the frame shows what it finds'''
 
     def __init__(self, settings, on_checked):
         self.on_checked = on_checked
+        self.enabled = settings.get('update_check', True)
         self.checked_at = settings.get('update_checked_at', 0)
         self.skipped = settings.get('update_skipped', '')
         self.started = time.monotonic()
@@ -273,7 +279,10 @@ class Updater:
         self.busy = False
         self.cancelled = False
 
+    # asked on whatever beat the app keeps while its window is hidden, a thread's too
     def is_due(self):
+        if not self.enabled or self.busy:
+            return False
         now = time.monotonic()
         if now - self.started < START_DELAY:
             return False
@@ -282,8 +291,8 @@ class Updater:
         # a clock set back counts as due
         return not 0 <= time.time() - self.checked_at < CHECK_SECONDS
 
-    def tick(self, enabled):
-        if enabled and not self.busy and self.is_due():
+    def tick(self):
+        if self.is_due():
             self.check()
 
     def check(self, forced=False):
@@ -321,6 +330,7 @@ class Updater:
             self.on_checked(release, 'found', forced)
 
     def update(self, release, on_progress, on_done):
+        '''on_done(error) runs on the main thread, error None when the app should now quit'''
         self.cancelled = False
 
         def work():

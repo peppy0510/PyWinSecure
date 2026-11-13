@@ -47,6 +47,15 @@ class SideMenu(Canvas):
         self.Bind(wx.EVT_MOTION, self.on_motion)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave)
         self.Bind(wx.EVT_MOUSE_CAPTURE_LOST, self.on_capture_lost)
+        # paint once while hidden so the first open does not flash white
+        wx.CallAfter(self.warm_up)
+
+    def warm_up(self):
+        if self.opened:
+            return
+        self.Show()
+        self.Update()
+        self.Hide()
 
     def get_height(self):
         total = self.MARGIN * 2
@@ -70,6 +79,7 @@ class SideMenu(Canvas):
         self.opened = True
         self.Show()
         self.Raise()
+        self.Update()
         if not self.HasCapture():
             self.CaptureMouse()
         self.timer.Start(self.STEP)
